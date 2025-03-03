@@ -1,10 +1,13 @@
-import { View, Text } from "react-native";
 import React from "react";
+import { ScrollView, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Explore() {
   return (
-    <View>
-      <Text>Explore</Text>
-    </View>
+    <SafeAreaView>
+      <ScrollView>
+        <Text>Explore</Text>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
