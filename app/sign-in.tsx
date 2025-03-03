@@ -1,8 +1,32 @@
 import { icons, images } from "@/constants";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { login } from "@/lib/appwrite";
+import { useGlobalContext } from "@/lib/global-provider";
+import { Redirect } from "expo-router";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Index() {
+export default function SignIn() {
+  const { refetch, loading, isLoggedIn } = useGlobalContext();
+
+  if (!loading && isLoggedIn) return <Redirect href="/" />;
+
+  async function handleLogin() {
+    const result = await login();
+
+    if (result) {
+      refetch();
+    } else {
+      Alert.alert("Login failed", "Please try again later");
+    }
+  }
+
   return (
     <SafeAreaView className="bg-white h-full">
       <ScrollView contentContainerClassName="h-full">
@@ -26,7 +50,7 @@ export default function Index() {
           </Text>
 
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={handleLogin}
             className="bg-white shadow-md shadow-zinc-300 rounded-full w-full py-4 mt-5"
           >
             <View className="flex flex-row items-center justify-center">
