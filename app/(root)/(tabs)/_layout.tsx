@@ -1,11 +1,11 @@
 import { Tabs } from "expo-router";
-import { Image, ImageProps, Text, View } from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 
 import { icons } from "@/constants";
 
 type TabIconProps = {
   focused: boolean;
-  icon: ImageProps;
+  icon: ImageSourcePropType;
   title: string;
 };
 
