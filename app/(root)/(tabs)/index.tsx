@@ -1,20 +1,52 @@
 import { Card, FeaturedCard } from "@/components/Cards";
 import { FilterCategories } from "@/components/FilterCategories";
 import { Search } from "@/components/Search";
-import { icons, images } from "@/constants";
+import { icons } from "@/constants";
+import { getLatestProperties, getProperties } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
+import { useAppwrite } from "@/lib/useAppwrite";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const { user } = useGlobalContext();
+  const params = useLocalSearchParams<{ query?: string; filter?: string }>();
+
+  const { data: latestProperties, loading: latestPropertiesLoading } =
+    useAppwrite({
+      fn: getLatestProperties,
+    });
+
+  const {
+    data: properties,
+    loading: propertiesLoading,
+    refetch,
+  } = useAppwrite({
+    fn: getProperties,
+    params: {
+      filter: params.filter!,
+      query: params.query!,
+      limit: 5,
+    },
+    skip: true,
+  });
+
+  useEffect(() => {
+    refetch({
+      filter: params.filter!,
+      query: params.query!,
+      limit: 5,
+    });
+  }, [params.filter, params.query]);
 
   return (
     <SafeAreaView className="bg-white h-full">
       <FlatList
-        data={[1, 2, 3, 4]}
+        data={properties}
         numColumns={2}
-        renderItem={() => <Card />}
+        renderItem={({ item }) => <Card item={item} />}
         keyExtractor={(item) => item.toString()}
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-4 px-5"
@@ -45,8 +77,8 @@ export default function Home() {
             </View>
 
             <FlatList
-              data={[1, 2, 3, 4]}
-              renderItem={() => <FeaturedCard />}
+              data={latestProperties}
+              renderItem={({ item }) => <FeaturedCard item={item} />}
               keyExtractor={(item) => item.toString()}
               horizontal
               bounces={false}
